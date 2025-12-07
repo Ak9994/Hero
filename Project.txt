@@ -1,0 +1,71 @@
+﻿[Tasks]
+
+VVIP → This assignment will be graded on code architecture. So make sure that you are using concepts like parent class, child class, method overriding, method overloading, and almost every OOP concept that you learned.
+The deadline for completing this assignment is of 4 days from the day you start.
+Write proper comments to define your features.
+You are free to add more features to this game.
+
+Game Design Document
+
+    Create a player class with the following member variables.
+        Health
+        Melee Damage
+        Ranged Damage
+        Defence
+        Special abilities
+    Narrate a story on your own if you want.
+    Our hero's village is captured by a monster named Murlocs.
+    To defeat a final boss, our hero needs to collect 4 things to defeat Murlocs.
+        Sword (Rewarded after completing level 2)
+        Shield (Rewarded after completing level 3)
+        Armour (Rewarded after completing level 4)
+        Bow (Rewarded after completing level 5)
+    There will be 6 levels in this game.
+        Increase the player's stats after each level.
+            Increase Max HP and reset the health to max,
+            Increase Melee Damage,
+            Defence, etc.
+        Award player special items and abilities after completing respected levels.
+        Create a battle loop of game vs AI enemies and as per your design choice give player options to heal or attack.
+        The player can either Attack or Heal (Feel free to add more features of your choice if you want) -
+            There will be special abilities for the player which keep getting unlocked as levels progress.
+            Depending upon the probability of activation of these special abilities - the abilities will get triggered when a player chooses to do an attack.
+        There will be a boss fight at level 6 - you can use creativity to add some more elements into that fight too.
+
+
+Level Details
+
+    Level 1
+        There will be only 1 enemy.
+        For enemies, code randomly generated attacks and defences against our player.
+        Our hero gets a map in level 1.
+    Level 2
+        There will be two enemies.
+        For enemies, code randomly generated attacks and defences against our player.
+        Special Ability Awarded - Critical hits (performs attack with massive damage boost)Probability - 10%
+        Special Item Awarded - Sword
+    Level 3
+        There will be three enemies.
+        For enemies, code randomly generated attacks and defences against our player.
+        Special Ability Awarded - Blocker (will get 0 damage on enemy hit)Probability - 10 %
+        Special Item Awarded - Shield
+    Level 4
+        There will be four enemies.
+        For enemies, code randomly generated attacks and defences against our player.
+        Special Ability Awarded - Life steal (Recovering a small amount of HP after giving damage)Probability - 10 %
+        Special Item Awarded - Armour
+    Level 5
+        There will be five enemies.
+        For enemies, code randomly generated attacks and defences against our player.
+        Special Ability Awarded - Ranged Attack (After performing this attack, the Hero won't take damage for the next attack of the enemy)Probability - 10 %
+        Special Item Awarded - Bow
+    Level 6
+        Boss Fight Murloc.
+        For enemies, code randomly generated attacks and defences against our player.
+        Add special abilities to the Murlocs of your choice, some examples
+            Ground Slash
+            Speed Dash
+            Health Regeneration
+
+
+gif
