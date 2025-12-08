@@ -71,7 +71,15 @@ public:
 		         int startlvl,
 				 int startxp,
 		         int xp_scaling ) :
-					PlayerName(name), Health(HP), Melee_Dmg(Melee), Ranged_Dmg(Ranged), Defense(def), Skills(sp), level(startlvl),xp(startxp),scaling(xp_scaling) {
+					PlayerName(name), 
+					Health(HP), 
+					Melee_Dmg(Melee), 
+					Ranged_Dmg(Ranged), 
+					Defense(def), 
+					Skills(sp), 
+					level(startlvl),
+					xp(startxp),
+					scaling(xp_scaling) {
 									max_xp_per_level();
 				}
 
