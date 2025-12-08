@@ -27,7 +27,7 @@ public:
 
 	//Find Max xp for next level
 	void max_xp_per_level() {
-		nextlevelxp = std::round(xp * std::pow(scaling, level - 1);
+		nextlevelxp = std::round(xp * std::pow(scaling, level - 1));
 		if (nextlevelxp < 1) { nextlevelxp = 1; }
 	}
 
