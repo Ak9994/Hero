@@ -108,7 +108,7 @@ int main() {
     // Simulate gaining experience
     player.To_next_level(150);
 
-    player.PrintStatus();
+    player.Status();
 
     return 0;
 }
