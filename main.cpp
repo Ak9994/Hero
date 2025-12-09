@@ -21,7 +21,7 @@ private:
     // Compute max xp for next level
     void max_xp_per_level() {
         int baseXP = 100;
-        nextlevelxp = static_cast<int>(std::round(base * std::pow(Scaling, std::max(0, level - 1))));
+        nextlevelxp = static_cast<int>(std::round(baseXP * std::pow(Scaling, std::max(0, level - 1))));
         if (nextlevelxp < 1) { nextlevelxp = 1; }
     }
 
