@@ -18,6 +18,8 @@ private:
     int nextlevelxp;    // xp needed to reach the next level from current level
     double Scaling;     // scaling factor for nextlevelxp
 
+public:
+
     // Compute max xp for next level
     void max_xp_per_level() {
         int baseXP = 100;
@@ -49,7 +51,6 @@ private:
         max_xp_per_level();
     }
 
-public:
     // Xp gains
     void To_next_level(int exp) {
         if (exp <= 0) { return; }
