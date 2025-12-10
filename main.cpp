@@ -103,13 +103,10 @@ int main() {
     // Create Player
     std::vector<std::string> player_skills = { "Slash", "Block", "Shoot" };
     Player_stats player("Hero", 100, 20, 15, 10, player_skills, 1, 0, 1.5);
-
-    player.Status();
-
-    // Simulate gaining experience
-    player.To_next_level(150);
-
-    player.Status();
-
+    int level_limit = 6;
+    for (int i = 0; i < level_limit; ++i) {
+        player.Status();
+        player.To_next_level(150); // Simulate gaining xp
+    }
     return 0;
 }
