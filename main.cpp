@@ -58,7 +58,9 @@ public:
             }
         }
     }
-
+    int GetLevel() const {
+        return level;
+    }
 // Compute max xp for next level
     void max_xp_per_level() {
         int baseXP = 100;
@@ -143,7 +145,7 @@ public:
             std::cout << "No weapons unlocked yet.\n";
             return;
         }
-        for(i=0;i<unlock_weapons.size();i++){
+        for(int i=0;i<unlock_weapons.size();i++){
             std::cout << WeaponString(unlock_weapons[i]);
             if( i+1 < unlock_weapons.size()) std::cout << ", ";
         }
@@ -154,13 +156,16 @@ int main() {
     // Create Player
     std::vector<std::string> player_skills = { "Slash", "Block", "Shoot" };
     Player_stats player("Hero", 100, 20, 15, 10, player_skills, 1, 0, 1.5);
-
-    player.Status();
-
-    // Simulate gaining experience
-    player.To_next_level(300);
-    player.Status();
-    player.display_unlock();
+    int Max_level = 6;
+    for(int i=0;i<Max_level;i++){
+        player.Status();
+        player.display_unlock();
+        player.To_next_level(150); // Gain 150 xp each iteration
+        if(player.GetLevel() >= Max_level){
+            std::cout << "Reached max level.\n";
+            break;
+        }
+    }
 
     return 0;
 }
