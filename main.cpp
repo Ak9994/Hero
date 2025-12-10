@@ -3,6 +3,7 @@
 #include <vector>
 #include <string>
 #include <cmath>    // for std::round, std::pow
+#include <algorithm>
 /* Weapons class*/
 enum class Weapons{
     Sword,
