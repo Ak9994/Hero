@@ -6,14 +6,18 @@
 #include <cmath>   // for std::round, std::pow
 #include <algorithm>
 #include <random>  // Enemy stat
-
-/* Weapons class*/
+// Monitor Game state for gamemanager
+enum class player_choice{
+    MainMenu,
+    Exploration,
+    Combat,
+    Exit }; 
+// Weapons class
 enum class Weapons{
     Sword,
     Shield,
     Armor,
-    Bow
-};
+    Bow  };
 
 // Convert weapon enum to string
 static std::string WeaponString(Weapons equipment) {
@@ -23,12 +27,11 @@ static std::string WeaponString(Weapons equipment) {
         case Weapons::Armor  : return "Armor";
         case Weapons::Bow    : return "Bow";
         default: return "Unknown";
-    }
-}
+    }}
 
-/* Player stats Class*/
+//Player stats Class
 class Player_stats {
-private:
+    private:
     /* Player Stats */
     int Health, Melee_Dmg, Ranged_Dmg, Defense;
     std::string PlayerName;
@@ -49,7 +52,7 @@ private:
         {4, Weapons::Armor}
     };
 
-public:
+    public:
     // Get current level
     int GetLevel(){ return level; }
 
@@ -165,8 +168,7 @@ public:
             if( i + 1 < unlock_weapons.size()) std::cout << ", ";
         }
         std::cout << "\n";
-    }
-};
+    } };
 
 // Enemy Structure
 struct Enemy{
@@ -174,17 +176,14 @@ struct Enemy{
     int Health;
     int Attack;
     int Defense;
-    int XpReward;
-};
-
+    int XpReward; };
 // Stage Definition
 class levelsetup{
-private:
-    int CurrentStage = 1;     // <-- initialize to a valid stage
-    const int Max_stages = 6;
-
-public:
-    levelsetup() = default;
+    private:
+        int CurrentStage = 1;     // <-- initialize to a valid stage
+        const int Max_stages = 6;
+    public:
+        levelsetup() = default;
 
     int GetCurrentStage(){ return CurrentStage; }
     int GetMaxStages(){ return Max_stages; }
@@ -222,6 +221,27 @@ public:
         e.XpReward= std::max(1, baseXpReward + var(rng));
         return e;
     }
+    // Create Boss Enemy 
+    Enemy CreateBossEnemy(int stage){
+        Enemy boss;
+        // set base stats
+        int baseHP       = 30 + stage * 10;
+        int baseAtk      = 5  + stage * 2;
+        int baseDef      = 5  + stage * 3;
+        int baseXpReward = 15 + stage * 2;
+
+        // random stats
+        std::mt19937 rng{std::random_device{}()};
+        std::uniform_int_distribution<int> var(-3,6);
+
+        // Assign stats
+        boss.Health = std::max(1, baseHP  + var(rng));
+        boss.Attack = std::max(1, baseAtk + var(rng));
+        boss.Defense = std::max(1, baseDef + var(rng));
+        boss.XpReward = std::max(1, baseXpReward + var(rng));
+
+        return boss;
+    }
 
     // Spawn Enemies for stage
     std::vector<Enemy> SpawnEnemy(){
@@ -239,6 +259,9 @@ public:
             Enemy Spawn_Enemy = CreateEnemy(CurrentStage, spawn);
             enemies.push_back(Spawn_Enemy);
         }
+
+        Enemy boss = CreateBossEnemy(CurrentStage);
+        enemies.push_back(boss);
         std::cout << " Spawning " << limit << " enemies for stage " << CurrentStage << " \n";
         return enemies;
     }
@@ -259,7 +282,101 @@ public:
     void ResetStage(){
         CurrentStage = 1;
         std::cout << " Resetting Stage \n";
-    }
+    } };
+// Game loop Manager
+class GameManager{
+    private:
+        Player_stats& player; 
+        player_choice selection;
+        std::vector<Enemy> enemy;
+        levelsetup& stages;
+        bool GameState;
+    
+    public:
+        GameManager(Player_stats& p,levelsetup& l):
+                    player(p),
+                    stages(l),
+                    selection(player_choice::MainMenu),
+                    GameState(true){}
+        // Select option
+        void set_choice(player_choice choice){ selection = choice; }
+        void Select_option(){
+            while(GameState){
+                switch(selection){
+                    case player_choice::MainMenu    : { handleMainMenu(); break; }
+                    case player_choice::Exploration : { handleExploration(); break; }
+                    case player_choice::Combat      : { handleCombat(); break; }
+                    case player_choice::Exit        : { handleExit(); break; }
+                    default: { std::cout << "Wrong Choice! , Please Enter correct choice" << "\n"; }
+                } } }
+        // Selection Functions
+        void handleMainMenu(){
+            std::cout << "\n ===== Main Menu ===== \n" 
+                      << "1. Explore \n" 
+                      << "2. Combat \n"
+                      << "3. Exit \n" 
+                      << " Select Option : " ;
+            int choice = 0;
+            // user input
+            if (!(std::cin >> choice)) { 
+                std::cin.clear();
+                std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+                choice = 3; 
+            }
+            switch(choice){
+                case 1: { selection = player_choice::Exploration; break;}
+                case 2: { selection = player_choice::Combat; break;}
+                case 3: { selection = player_choice::Exit; break; }
+                default: { selection = player_choice::MainMenu; break; }
+            }
+        }
+        void handleExploration(){
+            //explore same level
+            int currentlevel = stages.GetCurrentStage();
+            // validate choice
+            if(!(stages.SetStage(currentlevel))){
+                selection = player_choice::MainMenu;
+                return;
+            }
+            enemy = stages.SpawnEnemy();
+            if(enemy.empty()){
+                std::cout << "No enemies Left/spawned. Returning to Main Menu.\n";
+                selection = player_choice::MainMenu;
+                return;
+            }
+            std::cout << "Exploration complete. Enemies discovered: " << enemy.size() << "\n";
+            selection = player_choice::Combat;
+        }
+        void handleCombat(){
+            if(enemy.empty()){
+                std::cout << "No enemy found , Moving on \n";
+                selection = player_choice::MainMenu;
+                return;
+            }
+
+            int TotalXP = 0;
+
+            for(const auto& enemy: enemy){
+            TotalXP += enemy.XpReward;
+            std::cout << " Defeated " << enemy.Name
+                      << " XP Reward: " << enemy.XpReward << "\n";}
+
+            // Player stat update after defeating enemies
+            player.To_next_level(TotalXP);
+            player.player_status();
+            player.display_unlocked_weapons();
+
+            // advances lvl 
+            bool advance = stages.NextStage();
+            enemy.clear();
+            selection = advance ? player_choice::Exploration : player_choice::Combat;
+
+        }
+        void handleExit(){
+            std::cout << " Resetting Stage .... \n"; 
+            stages.ResetStage();
+            GameState = false;
+        }
 };
 
 int main() {
@@ -267,31 +384,6 @@ int main() {
     std::vector<std::string> player_skills = { "Slash", "Block", "Shoot" };
     Player_stats player("Hero", 100, 20, 15, 10, player_skills, 1, 0, 1.0);
     levelsetup stages;
-    // Level and Enemy Setup
-    for(int lvl = 1; lvl <= stages.GetMaxStages(); ++lvl) {     
-        //guard invalid stage
-        if (!stages.SetStage(lvl)) {
-            continue; // 
-        }
-
-        auto enemies = stages.SpawnEnemy();
-        int TotalXP = 0;
-
-        for(const auto& enemy: enemies){
-            TotalXP += enemy.XpReward;
-            std::cout << " Defeated " << enemy.Name
-                      << " XP Reward: " << enemy.XpReward << "\n";
-        }
-
-        // Player stat update after defeating enemies
-        player.To_next_level(TotalXP);
-        player.player_status();
-        player.display_unlocked_weapons();
-
-        // advances lvl
-        stages.NextStage();
-    }
-
-    stages.ResetStage();
-    return 0;
+    GameManager GM(player,stages);
+    GM.Select_option();
 }
